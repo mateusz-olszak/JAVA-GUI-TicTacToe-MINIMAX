@@ -1,17 +1,8 @@
 package com.company;
 import javax.swing.*;
-import javax.xml.stream.StreamFilter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
 
-import static java.lang.Integer.*;
 public class Win{
-    public int if_win(ImageIcon character,ImageIcon opponent,JButton btns[]){
+    public int checkWinner(ImageIcon character, ImageIcon opponent, JButton btns[]){
         //horizontally
         if (btns[0].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() != null || btns[3].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[3].getIcon() != null || btns[6].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[7].getIcon() != null) {
             return -1;
@@ -38,15 +29,15 @@ public class Win{
 
         return 0;
     }
-    public boolean tie(ImageIcon character,ImageIcon opponent,JButton btns[],JLabel label){
-        if(btns[0].getIcon() != null && btns[1].getIcon() != null && btns[2].getIcon() != null && btns[3].getIcon() != null && btns[4].getIcon() != null && btns[5].getIcon() != null && btns[6].getIcon() != null && btns[7].getIcon() != null && btns[8].getIcon() != null && win(character,opponent,btns,label) == true)
+    private boolean returnTie(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
+        if(btns[0].getIcon() != null && btns[1].getIcon() != null && btns[2].getIcon() != null && btns[3].getIcon() != null && btns[4].getIcon() != null && btns[5].getIcon() != null && btns[6].getIcon() != null && btns[7].getIcon() != null && btns[8].getIcon() != null && returnWinner(character,opponent,btns,label) == true)
         {
-            label.setText("It's a tie");
+            label.setText("It's a returnTie");
             return true;
         }
         return false;
     }
-    public boolean win(ImageIcon character,ImageIcon opponent,JButton btns[],JLabel label){
+    private boolean returnWinner(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
         //horizontally
         if (btns[0].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() != null || btns[3].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[3].getIcon() != null || btns[6].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[7].getIcon() != null) {
             label.setText("Player wins");
@@ -77,8 +68,8 @@ public class Win{
         }
         return true;
     }
-    public void who_wins(ImageIcon character,ImageIcon opponent,JButton btns[],JLabel label){
-        if(win(character,opponent,btns,label) != true) for(int i=0; i<9; i++) btns[i].setEnabled(false);
-        if(tie(character,opponent,btns,label) == true) for(int i=0; i<9; i++) btns[i].setEnabled(false);
+    public void showWinner(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
+        if(returnWinner(character,opponent,btns,label) != true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
+        if(returnTie(character,opponent,btns,label) == true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
     }
 }

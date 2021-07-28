@@ -4,41 +4,32 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.xml.stream.StreamFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Integer.*;
 
-public class Move extends Win implements ActionListener {
-    JLabel label = new JLabel("Tic-Tac-Toe");
-    JButton pvp = new JButton("Player starts");
-    JButton pvc = new JButton("Computer starts");
-    JButton btnX;
-    JButton btnO;
-    JButton reset = new JButton("RESET");
-    int score;
-    int turn=0;
-    int counter=0;
-    boolean player = false;
-    boolean computer = false;
-    ImageIcon character;
-    ImageIcon opponent;
-    JFrame window = new JFrame("Tic Tac Toe");
-    JPanel panel = new JPanel();
-    JPanel panel1 = new JPanel();
-    JPanel panel2 = new JPanel();
-    JPanel panel3 = new JPanel();
-    JButton b[] = new JButton[9];
-    ImageIcon X;
-    ImageIcon O;
+public class Move implements ActionListener {
+    private Win win = new Win();
+    private JLabel label = new JLabel("Tic-Tac-Toe");
+    private JButton pvp = new JButton("Player starts");
+    private JButton pvc = new JButton("Computer starts");
+    private JButton btnX;
+    private JButton btnO;
+    private JButton reset = new JButton("RESET");
+    private int turn=0;
+    private int counter=0;
+    private ImageIcon character;
+    private ImageIcon opponent;
+    private JFrame window = new JFrame("Tic Tac Toe");
+    private JPanel panel = new JPanel();
+    private JPanel panel1 = new JPanel();
+    private JPanel panel2 = new JPanel();
+    private JPanel panel3 = new JPanel();
+    private JButton b[] = new JButton[9];
+    private ImageIcon X;
+    private ImageIcon O;
 
     public Move(){
         window.add(pvp);
@@ -169,7 +160,7 @@ public class Move extends Win implements ActionListener {
                         }
                         gameState(b,counter);
                         counter +=1;
-                        who_wins(character,opponent,b,label);
+                        win.showWinner(character,opponent,b,label);
                     }
                 }
             }
@@ -183,36 +174,33 @@ public class Move extends Win implements ActionListener {
                         }
                         counter += 1;
                         gameState(b, counter);
-                        who_wins(character,opponent,b,label);
+                        win.showWinner(character,opponent,b,label);
                     }
                 }
             }
         }
     };
-    private ActionListener clickReset = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            if(ev.getSource() == reset){
-                for(int i=0; i<9; i++){
-                    b[i].setIcon(null);
-                    counter = 0;
-                    for(int j=0; j<9; j++) b[j].setEnabled(true);
-                    panel2.remove(b[i]);
-                    label.setText("Tic-Tac-Toe");
-                    label.setBorder(new CompoundBorder());
-                    panel1.hide();
-                    panel2.hide();
-                    panel3.hide();
-                    pvp.show();
-                    pvc.show();
-                }
+    private ActionListener clickReset = ev -> {
+        if(ev.getSource() == reset){
+            for(int i=0; i<9; i++){
+                b[i].setIcon(null);
+                counter = 0;
+                for(int j=0; j<9; j++) b[j].setEnabled(true);
+                panel2.remove(b[i]);
+                label.setText("Tic-Tac-Toe");
+                label.setBorder(new CompoundBorder());
+                panel1.hide();
+                panel2.hide();
+                panel3.hide();
+                pvp.show();
+                pvc.show();
             }
         }
     };
     ///################################## MINIMAX ALGORITHM #################################
 
 
-    public Boolean isMovesLeft(JButton[] board) {
+    private Boolean isMovesLeft(JButton[] board) {
         for (int i = 0; i < board.length; i++)
             if (board[i].getIcon() == null)
                 return true;
@@ -220,7 +208,7 @@ public class Move extends Win implements ActionListener {
     }
 
 
-    public void findBestMove(JButton[] btns, int counter, int turn) {
+    private void findBestMove(JButton[] btns, int counter, int turn) {
         int bestScore = -1;
         int num=0;
 
@@ -288,10 +276,9 @@ public class Move extends Win implements ActionListener {
     }
 
     //#############################$#$#$$$$$$$$$$$$$###$##$#$$$#$#$#$$##$##$$#$#$#$#$##
-    public int minimax(JButton[] btns, int depth, Boolean isMax) {
-        player = false;
-        computer = true;
-        score = if_win(character,opponent,btns);
+    private int minimax(JButton[] btns, int depth, Boolean isMax) {
+        int score;
+        score = win.checkWinner(character,opponent,btns);
 
         if (score == 1)
             return score - depth;
@@ -328,7 +315,7 @@ public class Move extends Win implements ActionListener {
             return bestScore;
         }
     }
-    public int gameState(JButton[] btns, int counter) {
+    private int gameState(JButton[] btns, int counter) {
         if(turn == 1){
             // SET 0
             if(
