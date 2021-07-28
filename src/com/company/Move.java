@@ -28,8 +28,8 @@ public class Move implements ActionListener {
     private final JPanel panel2 = new JPanel();
     private final JPanel panel3 = new JPanel();
     private final JButton b[] = new JButton[9];
-    private final ImageIcon X;
-    private final ImageIcon O;
+    private ImageIcon X;
+    private ImageIcon O;
 
     public Move(){
         window.add(pvp);

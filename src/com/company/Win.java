@@ -32,7 +32,7 @@ public class Win{
     private boolean getTie(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
         if(btns[0].getIcon() != null && btns[1].getIcon() != null && btns[2].getIcon() != null && btns[3].getIcon() != null && btns[4].getIcon() != null && btns[5].getIcon() != null && btns[6].getIcon() != null && btns[7].getIcon() != null && btns[8].getIcon() != null && getWinner(character,opponent,btns,label) == true)
         {
-            label.setText("It's a getTie");
+            label.setText("It's a Tie");
             return true;
         }
         return false;
