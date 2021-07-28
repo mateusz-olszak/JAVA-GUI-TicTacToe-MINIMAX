@@ -30,6 +30,8 @@ public class Move implements ActionListener {
     private final JButton b[] = new JButton[9];
     private ImageIcon X;
     private ImageIcon O;
+    private final MiniMax miniMax = new MiniMax();
+    private final GameState state = new GameState();
 
     public Move(){
         window.add(pvp);
@@ -143,7 +145,7 @@ public class Move implements ActionListener {
             window.add(panel2);
             window.add(panel3,BorderLayout.SOUTH);
             if(turn == 2){
-                findBestMove(b,0,turn);
+                miniMax.findBestMove(b,0,turn, character, opponent, win);
             }
         }
     }
@@ -158,7 +160,7 @@ public class Move implements ActionListener {
                         } else if (character == O) {
                             b[i].setIcon(O);
                         }
-                        gameState(b,counter);
+                        state.gameState(b,counter,turn,character,opponent,win,miniMax);
                         counter +=1;
                         win.showWinner(character,opponent,b,label);
                     }
@@ -173,7 +175,7 @@ public class Move implements ActionListener {
                             b[i].setIcon(O);
                         }
                         counter += 1;
-                        gameState(b, counter);
+                        state.gameState(b, counter,turn,character,opponent,win,miniMax);
                         win.showWinner(character,opponent,b,label);
                     }
                 }
@@ -197,296 +199,5 @@ public class Move implements ActionListener {
             }
         }
     };
-    ///################################## MINIMAX ALGORITHM #################################
 
-
-    private Boolean isMovesLeft(JButton[] board) {
-        for (int i = 0; i < board.length; i++)
-            if (board[i].getIcon() == null)
-                return true;
-        return false;
-    }
-
-
-    private void findBestMove(JButton[] btns, int counter, int turn) {
-        int bestScore = -1;
-        int num=0;
-
-        // ##################################################### TURN 1 #################################################
-        if(turn == 1){
-            if (
-                    btns[8].getIcon() == character && btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == opponent && btns[7].getIcon() == null && btns[6].getIcon() == null
-            ) {
-                for (int i = 0; i < 9; i++) {
-                    if (btns[i].getIcon() == null) {
-                        btns[i].setIcon(opponent);
-                        int score = minimax(btns, 0, true);
-                        btns[i].setIcon(null);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            num = i;
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < 9; i++) {
-                    if (btns[i].getIcon() == null) {
-                        btns[i].setIcon(opponent);
-                        int score = minimax(btns, 0, false);
-                        btns[i].setIcon(null);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            num = i;
-                        }
-                    }
-                }
-            }
-        }
-        // ##################################################### TURN 2 #################################################
-        else{
-            // For turn 2
-            if(counter <3 && btns[4].getIcon() == character) {
-                for (int i = 0; i < 9; i++) {
-                    if (btns[i].getIcon() == null) {
-                        btns[i].setIcon(opponent);
-                        int score = minimax(btns, 0, false);
-                        btns[i].setIcon(null);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            num = i;
-                        }
-                    }
-                }
-            }
-            else{
-                for (int i = 0; i < 9; i++) {
-                    if (btns[i].getIcon() == null) {
-                        btns[i].setIcon(opponent);
-                        int score = minimax(btns, 0, true);
-                        btns[i].setIcon(null);
-                        if (score > bestScore) {
-                            bestScore = score;
-                            num = i;
-                        }
-                    }
-                }
-            }
-        }
-        btns[num].setIcon(opponent);
-    }
-
-    //#############################$#$#$$$$$$$$$$$$$###$##$#$$$#$#$#$$##$##$$#$#$#$#$##
-    private int minimax(JButton[] btns, int depth, Boolean isMax) {
-        int score;
-        score = win.checkWinner(character,opponent,btns);
-
-        if (score == 1)
-            return score - depth;
-
-        if (score == -1)
-            return score + depth;
-
-        if (isMovesLeft(btns) == false)
-            return 0;
-
-
-        if (isMax) {
-            int bestScore = -1;
-            for (int i = 0; i < 9; i++) {
-                if (btns[i].getIcon() == null) {
-                    btns[i].setIcon(opponent);
-                    score = minimax(btns, depth+1, isMax);
-                    btns[i].setIcon(null);
-                    bestScore = max(score, bestScore);
-                }
-            }
-            return bestScore;
-        }
-        else {
-            int bestScore = 1;
-            for (int i = 0; i < 9; i++) {
-                if (btns[i].getIcon() == null ) {
-                    btns[i].setIcon(character);
-                    score = minimax(btns, depth+1, isMax);
-                    btns[i].setIcon(null);
-                    bestScore = min(score, bestScore);
-                }
-            }
-            return bestScore;
-        }
-    }
-    private int gameState(JButton[] btns, int counter) {
-        if(turn == 1){
-            // SET 0
-            if(
-                    btns[4].getIcon() == character && btns[0].getIcon() == null && btns[2].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[1].getIcon() == character && btns[0].getIcon() == null && btns[5].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[3].getIcon() == character && btns[0].getIcon() == null && btns[2].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[5].getIcon() == character && btns[6].getIcon() == character && btns[4].getIcon() == opponent && btns[8].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[7].getIcon() == null
-            ){
-                btns[0].setIcon(opponent);
-                return 1;
-            }
-            // SET 1
-            if(
-                    btns[0].getIcon() == character && btns[2].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null && btns[0].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[6].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null && btns[0].getIcon() == null && btns[3].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[3].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[7].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[7].getIcon() == opponent && btns[3].getIcon() == null && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[5].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[7].getIcon() == character && btns[1].getIcon() == null && btns[8].getIcon() == null && btns[6].getIcon() == null && btns[2].getIcon() == null && btns[4].getIcon() == null && btns[5].getIcon() == null
-            ){
-                btns[1].setIcon(opponent);
-                return 1;
-            }
-            // SET 2
-            if(
-                    btns[6].getIcon() == character && btns[8].getIcon() == character && btns[1].getIcon() == character && btns[5].getIcon() == character && btns[4].getIcon() == opponent && btns[7].getIcon() == opponent && btns[2].getIcon() == null ||
-                            btns[3].getIcon() == character &&  btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[1].getIcon() == character &&  btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[0].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character &&  btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[6].getIcon() == character && btns[2].getIcon() == null ||
-                            btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[5].getIcon() == character && btns[2].getIcon() == null && btns[6].getIcon() == null && btns[3].getIcon() == null && btns[0].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[1].getIcon() == character && btns[4].getIcon() == opponent && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[2].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[3].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[3].getIcon() == character && btns[5].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[3].getIcon() == character && btns[7].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null && btns[8].getIcon() == null
-            ){
-                btns[2].setIcon(opponent);
-                return 1;
-            }
-            // SET 3
-            if(
-                    btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[3].getIcon() == null && btns[2].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[2].getIcon() == opponent && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[1].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[6].getIcon() == character && btns[4].getIcon() == opponent && btns[3].getIcon() == null && btns[2].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[6].getIcon() == opponent && btns[0].getIcon() == character && btns[1].getIcon() == null && btns[3].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == character && btns[3].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null ||
-                            btns[1].getIcon() == character && btns[2].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[0].getIcon() == null && btns[7].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[2].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[5].getIcon() == character && btns[2].getIcon() == opponent && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[4].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[6].getIcon() == opponent && btns[8].getIcon() == opponent && btns[0].getIcon() == null && btns[3].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[4].getIcon() == character && btns[7].getIcon() == character && btns[0].getIcon() == opponent && btns[6].getIcon() == opponent && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[5].getIcon() == null && btns[8].getIcon() == null
-            ){
-                btns[3].setIcon(opponent);
-                return 1;
-            }
-            // SET 4
-            if(btns[0].getIcon() == character && btns[4].getIcon() == null && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[2].getIcon() == character && btns[4].getIcon() == null && btns[1].getIcon() == null ||
-                    btns[6].getIcon() == character && btns[4].getIcon() == null && btns[7].getIcon() == null && btns[0].getIcon() == null ||
-                    btns[8].getIcon() == character && btns[4].getIcon() == null && btns[7].getIcon() == null && btns[3].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[7].getIcon() == character && btns[3].getIcon() == character && btns[1].getIcon() == opponent && btns[6].getIcon() == opponent && btns[2].getIcon() == null && btns[4].getIcon() == null && btns[5].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[2].getIcon() == null && btns[4].getIcon() == null && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[0].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[4].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[2].getIcon() == opponent && btns[1].getIcon() == null && btns[0].getIcon() == null && btns[4].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[5].getIcon() == character && btns[1].getIcon() == opponent && btns[2].getIcon() == null && btns[3].getIcon() == null && btns[4].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null
-            ){
-                btns[4].setIcon(opponent);
-                return 1;
-            }
-            // SET 5
-            if(
-                    btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[3].getIcon() == character && btns[5].getIcon() == null && btns[1].getIcon() == null && btns[8].getIcon() == null && btns[6].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[5].getIcon() == null && btns[3].getIcon() == null ||
-                            btns[1].getIcon() == character && btns[2].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[0].getIcon() == opponent && btns[3].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[6].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[1].getIcon() == character && btns[6].getIcon() == character && btns[2].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[8].getIcon() == null && btns[7].getIcon() == character ||
-                            btns[0].getIcon() == character && btns[1].getIcon() == character && btns[6].getIcon() == character && btns[2].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == character ||
-                            btns[2].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[0].getIcon() == character && btns[6].getIcon() == opponent && btns[5].getIcon() == null && btns[6].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[3].getIcon() == character && btns[4].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[6].getIcon() == opponent && btns[8].getIcon() == opponent && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[7].getIcon() == character && btns[2].getIcon() == character && btns[8].getIcon() == character && btns[1].getIcon() == opponent && btns[4].getIcon() == opponent && btns[6].getIcon() == opponent && btns[3].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[1].getIcon() == character && btns[6].getIcon() == character && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[2].getIcon() == character && btns[6].getIcon() == character && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null && btns[5].getIcon() == null
-            ){
-                btns[5].setIcon(opponent);
-                return 1;
-            }
-            // SET 6
-            if(btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[2].getIcon() == character && btns[6].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[3].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == null && btns[8].getIcon() == null && btns[2].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[5].getIcon() == character && btns[1].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == null && btns[8].getIcon() == null  && btns[7].getIcon() == null && btns[3].getIcon() == null  && btns[2].getIcon() == opponent ||
-                    btns[0].getIcon() == character && btns[8].getIcon() == character && btns[1].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == null && btns[5].getIcon() == null  && btns[7].getIcon() == null && btns[3].getIcon() == null  && btns[2].getIcon() == opponent ||
-                    btns[0].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == character && btns[4].getIcon() == opponent && btns[6].getIcon() == null && btns[5].getIcon() == null  && btns[8].getIcon() == null && btns[3].getIcon() == null  && btns[2].getIcon() == opponent ||
-                    btns[0].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[6].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null && btns[4].getIcon() == null && btns[5].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[7].getIcon() == character && btns[5].getIcon() == character && btns[1].getIcon() == opponent && btns[0].getIcon() == null && btns[2].getIcon() == null && btns[4].getIcon() == null && btns[3].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null ||
-                    btns[2].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[0].getIcon() == null && btns[3].getIcon() == null && btns[4].getIcon() == null && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == null && btns[0].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null ||
-                    btns[7].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[6].getIcon() == null ||
-                    btns[1].getIcon() == character && btns[5].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[1].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[3].getIcon() == null && btns[7].getIcon() == null ||
-                    btns[4].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[0].getIcon() == opponent && btns[3].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[4].getIcon() == character && btns[5].getIcon() == character && btns[8].getIcon() == character && btns[0].getIcon() == opponent && btns[3].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[5].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null
-            ){
-                btns[6].setIcon(opponent);
-                return 1;
-            }
-            // SET 7
-            if(
-                    btns[6].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[7].getIcon() == null && btns[1].getIcon() == null && btns[0].getIcon() == null ||
-                            btns[0].getIcon() == opponent && btns[4].getIcon() == character && btns[1].getIcon() == character && btns[7].getIcon() == null && btns[2].getIcon() == null && btns[5].getIcon() == null ||
-                            btns[5].getIcon() == character && btns[8].getIcon() == character && btns[4].getIcon() == opponent && btns[2].getIcon() == opponent && btns[0].getIcon() == null && btns[6].getIcon() == character && btns[7].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[2].getIcon() == character && btns[8].getIcon() == character && btns[1].getIcon() == opponent && btns[4].getIcon() == opponent && btns[3].getIcon() == null && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[2].getIcon() == character && btns[3].getIcon() == character && btns[1].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[2].getIcon() == character && btns[6].getIcon() == character && btns[1].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[3].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                            btns[2].getIcon() == character && btns[3].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null ||
-                            btns[0].getIcon() == character && btns[5].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == character && btns[2].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[7].getIcon() == null
-            ){
-                btns[7].setIcon(opponent);
-                return 1;
-            }
-            // SET 8
-            if(btns[7].getIcon() == character && btns[6].getIcon() == character && btns[8].getIcon() == null && btns[0].getIcon() == null && btns[2].getIcon() == null && btns[3].getIcon() == null ||
-                    btns[6].getIcon() == character && btns[7].getIcon() == character && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[8].getIcon() == null && btns[3].getIcon() == null ||
-                    btns[2].getIcon() == character && btns[5].getIcon() == character && btns[4].getIcon() == opponent && btns[0].getIcon() == null && btns[1].getIcon() == null && btns[3].getIcon() == null && btns[7].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[6].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[3].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[7].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[5].getIcon() == null && btns[3].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[2].getIcon() == opponent && btns[3].getIcon() == opponent && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[3].getIcon() == opponent && btns[6].getIcon() == opponent && btns[8].getIcon() == null && btns[2].getIcon() == null ||
-                    btns[7].getIcon() == character && btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == null && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[5].getIcon() == character && btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == null && btns[7].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[6].getIcon() == character && btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[2].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[6].getIcon() == opponent && btns[4].getIcon() == opponent && btns[3].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[5].getIcon() == character && btns[6].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[2].getIcon() == character && btns[3].getIcon() == character && btns[6].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[5].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[2].getIcon() == character && btns[3].getIcon() == character && btns[7].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[5].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[0].getIcon() == character && btns[2].getIcon() == character && btns[5].getIcon() == character && btns[7].getIcon() == character && btns[1].getIcon() == opponent && btns[3].getIcon() == opponent && btns[4].getIcon() == opponent && btns[6].getIcon() == null && btns[8].getIcon() == null ||
-                    btns[3].getIcon() == character && btns[5].getIcon() == character && btns[6].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[1].getIcon() == null && btns[2].getIcon() == null && btns[7].getIcon() == null && btns[8].getIcon() == null
-            ){
-                btns[8].setIcon(opponent);
-                return 1;
-            }
-            if(btns[0].getIcon() == null || btns[1].getIcon() == null || btns[2].getIcon() == null || btns[3].getIcon() == null || btns[4].getIcon() == null || btns[5].getIcon() == null || btns[6].getIcon() == null || btns[7].getIcon() == null || btns[8].getIcon() == null)
-                findBestMove(b,counter,turn);
-        }
-        else{
-            if(counter == 1 && btns[0].getIcon() == opponent && btns[8].getIcon() == character || counter == 1 && btns[0].getIcon() == opponent && btns[5].getIcon() == character || counter == 1 && btns[0].getIcon() == opponent && btns[7].getIcon() == character){
-                btns[2].setIcon(opponent);
-                return 1;
-            }
-            if(btns[0].getIcon() == opponent && btns[2].getIcon() == opponent && btns[1].getIcon() == character  && btns[8].getIcon() == character && btns[6].getIcon() == null){
-                btns[6].setIcon(opponent);
-                return 1;}
-            if(btns[0].getIcon() == opponent && btns[2].getIcon() == opponent && btns[1].getIcon() == character  && btns[5].getIcon() == character && btns[4].getIcon() == null){
-                btns[4].setIcon(opponent);
-                return 1;}
-            if(btns[0].getIcon() == opponent && btns[2].getIcon() == opponent && btns[1].getIcon() == character  && btns[7].getIcon() == character && btns[4].getIcon() == null){
-                btns[4].setIcon(opponent);
-                return 1;}
-            findBestMove(btns,1,2);
-        }
-
-        return 0;
-    }
 }
