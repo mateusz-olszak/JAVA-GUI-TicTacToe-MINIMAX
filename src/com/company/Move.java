@@ -11,25 +11,25 @@ import java.awt.event.ActionListener;
 import static java.lang.Integer.*;
 
 public class Move implements ActionListener {
-    private Win win = new Win();
-    private JLabel label = new JLabel("Tic-Tac-Toe");
-    private JButton pvp = new JButton("Player starts");
-    private JButton pvc = new JButton("Computer starts");
-    private JButton btnX;
-    private JButton btnO;
-    private JButton reset = new JButton("RESET");
+    private final Win win = new Win();
+    private final JLabel label = new JLabel("Tic-Tac-Toe");
+    private final JButton pvp = new JButton("Player starts");
+    private final JButton pvc = new JButton("Computer starts");
+    private final JButton btnX;
+    private final JButton btnO;
+    private final JButton reset = new JButton("RESET");
     private int turn=0;
     private int counter=0;
     private ImageIcon character;
     private ImageIcon opponent;
-    private JFrame window = new JFrame("Tic Tac Toe");
-    private JPanel panel = new JPanel();
-    private JPanel panel1 = new JPanel();
-    private JPanel panel2 = new JPanel();
-    private JPanel panel3 = new JPanel();
-    private JButton b[] = new JButton[9];
-    private ImageIcon X;
-    private ImageIcon O;
+    private final JFrame window = new JFrame("Tic Tac Toe");
+    private final JPanel panel = new JPanel();
+    private final JPanel panel1 = new JPanel();
+    private final JPanel panel2 = new JPanel();
+    private final JPanel panel3 = new JPanel();
+    private final JButton b[] = new JButton[9];
+    private final ImageIcon X;
+    private final ImageIcon O;
 
     public Move(){
         window.add(pvp);
