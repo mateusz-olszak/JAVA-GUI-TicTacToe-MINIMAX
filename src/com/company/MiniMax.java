@@ -9,13 +9,11 @@ public class MiniMax {
 
     private final GameState state = new GameState();
 
-    ///################################## MINIMAX ALGORITHM #################################
-
     public void findBestMove(JButton[] btns, int counter, int turn, ImageIcon character, ImageIcon opponent, Win win) {
         int bestScore = -1;
         int num=0;
 
-        // ##################################################### TURN 1 #################################################
+        //  TURN 1
         if(turn == 1){
             if (
                     btns[8].getIcon() == character && btns[1].getIcon() == character && btns[3].getIcon() == character && btns[0].getIcon() == opponent && btns[4].getIcon() == opponent && btns[2].getIcon() == opponent && btns[7].getIcon() == null && btns[6].getIcon() == null
@@ -45,7 +43,7 @@ public class MiniMax {
                 }
             }
         }
-        // ##################################################### TURN 2 #################################################
+        //  TURN 2
         else{
             // For turn 2
             if(counter <3 && btns[4].getIcon() == character) {
@@ -78,7 +76,6 @@ public class MiniMax {
         btns[num].setIcon(opponent);
     }
 
-    //#############################$#$#$$$$$$$$$$$$$###$##$#$$$#$#$#$$##$##$$#$#$#$#$##
     private int minimax(JButton[] btns, int depth, Boolean isMax, ImageIcon character, ImageIcon opponent, Win win) {
         int score;
         score = win.checkWinner(character,opponent,btns);
