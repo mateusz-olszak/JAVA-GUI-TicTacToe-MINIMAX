@@ -3,6 +3,15 @@ package com.company;
 import javax.swing.*;
 
 public class GameState {
+
+
+    public Boolean isMovesLeft(JButton[] board) {
+        for (int i = 0; i < board.length; i++)
+            if (board[i].getIcon() == null)
+                return true;
+        return false;
+    }
+
     public int gameState(JButton[] btns, int counter,int turn, ImageIcon character, ImageIcon opponent,Win win,MiniMax miniMax) {
         if(turn == 1){
             // SET 0

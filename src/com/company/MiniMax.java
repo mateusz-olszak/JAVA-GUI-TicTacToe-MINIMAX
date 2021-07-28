@@ -7,16 +7,9 @@ import static java.lang.Integer.min;
 
 public class MiniMax {
 
+    private final GameState state = new GameState();
+
     ///################################## MINIMAX ALGORITHM #################################
-
-
-    private Boolean isMovesLeft(JButton[] board) {
-        for (int i = 0; i < board.length; i++)
-            if (board[i].getIcon() == null)
-                return true;
-        return false;
-    }
-
 
     public void findBestMove(JButton[] btns, int counter, int turn, ImageIcon character, ImageIcon opponent, Win win) {
         int bestScore = -1;
@@ -96,7 +89,7 @@ public class MiniMax {
         if (score == -1)
             return score + depth;
 
-        if (isMovesLeft(btns) == false)
+        if (state.isMovesLeft(btns) == false)
             return 0;
 
 
