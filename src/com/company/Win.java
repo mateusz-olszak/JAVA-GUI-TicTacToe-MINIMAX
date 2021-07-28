@@ -29,15 +29,15 @@ public class Win{
 
         return 0;
     }
-    private boolean returnTie(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
-        if(btns[0].getIcon() != null && btns[1].getIcon() != null && btns[2].getIcon() != null && btns[3].getIcon() != null && btns[4].getIcon() != null && btns[5].getIcon() != null && btns[6].getIcon() != null && btns[7].getIcon() != null && btns[8].getIcon() != null && returnWinner(character,opponent,btns,label) == true)
+    private boolean getTie(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
+        if(btns[0].getIcon() != null && btns[1].getIcon() != null && btns[2].getIcon() != null && btns[3].getIcon() != null && btns[4].getIcon() != null && btns[5].getIcon() != null && btns[6].getIcon() != null && btns[7].getIcon() != null && btns[8].getIcon() != null && getWinner(character,opponent,btns,label) == true)
         {
-            label.setText("It's a returnTie");
+            label.setText("It's a getTie");
             return true;
         }
         return false;
     }
-    private boolean returnWinner(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
+    private boolean getWinner(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
         //horizontally
         if (btns[0].getIcon() == character && btns[1].getIcon() == character && btns[2].getIcon() == character && btns[0].getIcon() != null || btns[3].getIcon() == character && btns[4].getIcon() == character && btns[5].getIcon() == character && btns[3].getIcon() != null || btns[6].getIcon() == character && btns[7].getIcon() == character && btns[8].getIcon() == character && btns[7].getIcon() != null) {
             label.setText("Player wins");
@@ -69,7 +69,7 @@ public class Win{
         return true;
     }
     public void showWinner(ImageIcon character, ImageIcon opponent, JButton btns[], JLabel label){
-        if(returnWinner(character,opponent,btns,label) != true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
-        if(returnTie(character,opponent,btns,label) == true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
+        if(getWinner(character,opponent,btns,label) != true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
+        if(getTie(character,opponent,btns,label) == true) for(int i = 0; i<9; i++) btns[i].setEnabled(false);
     }
 }
